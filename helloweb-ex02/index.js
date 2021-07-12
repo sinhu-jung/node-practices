@@ -5,14 +5,20 @@ const express = require('express');
 
 const mainRouter = require('./routes/main.js');
 const helloRouter = require('./routes/hello.js');
+const userRouter = require('./routes/user.js');
 const port = 8080;
 
 // Application Setup
 const application = express()
     // 1. static serve
-    .use(express.static(path.join(__dirname, "public")))
-    //2. view engine setup
-    //3. request router
+    .use(express.static(path.join(__dirname, 'public')))
+    //2. request body parser
+    .use(express.urlencoded({extended: true})) // application/x-www-form...
+    .use(express.json()) // application/json 
+    //3. view engine setup
+    .set('views', path.join(__dirname, 'views'))
+    .set('view engine', 'ejs')
+    //4. request router
     .all('*', function(req, res, next){
         res.locals.req = req;
         res.locals.res = res;
@@ -20,6 +26,7 @@ const application = express()
     })
     .use('/', mainRouter)
     .use('/hello', helloRouter)
+    .use('/user', userRouter);
 
     // use('/', function(req, resp, next){
     //     next();

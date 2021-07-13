@@ -9,8 +9,7 @@ module.exports = {
         //const query = (sql, data) => new Promise((resolve, reject) => conn.query(sql, data, (error, rows, field) => error ? reject(error) : resolve(rows)));
         const query = util.promisify(conn.query).bind(conn);
         try {
-            const results = await query("select first_name as firstName, last_name as lastName, email from emaillist order by no desc", []);
-            return results;    
+            return results = await query("select first_name as firstName, last_name as lastName, email from emaillist order by no desc", []);
         } catch(e) {
             console.error(e);
         } finally {
@@ -18,6 +17,17 @@ module.exports = {
         }
     },
 
-    insert: function() {
+    insert: async function(emaillist) {
+        console.log(emaillist);
+        console.log(Object.values(emaillist));
+        const conn = dbconn();
+        const query = util.promisify(conn.query).bind(conn);
+        try {
+            return results = await query("insert into emaillist values(null, ?, ?, ?)", Object.values(emaillist));
+        } catch(e) {
+            console.error(e);
+        } finally {
+            conn.end();
+        }
     }
 }

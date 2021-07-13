@@ -3,9 +3,7 @@ const path = require('path');
 
 const express = require('express');
 
-const mainRouter = require('./routes/main.js');
-const helloRouter = require('./routes/hello.js');
-const userRouter = require('./routes/user.js');
+const emaillistRouter = require('./routes/emaillist');
 const port = 8080;
 
 // Application Setup
@@ -24,9 +22,7 @@ const application = express()
         res.locals.res = res;
         next();
     })
-    .use('/', mainRouter)
-    .use('/hello', helloRouter)
-    .use('/user', userRouter);
+    .use('/', emaillistRouter);
 
     // use('/', function(req, resp, next){
     //     next();

@@ -4,10 +4,11 @@
 $ npm init -y
 
 ## 설치패키지
+```bash
 $ npm i express
 $ npm i ejs
 $ npm i -D nodemon
-
+```
 ## script in package.json
 ```JSON
 .

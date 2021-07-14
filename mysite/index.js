@@ -3,11 +3,12 @@ const http = require('http');
 const path = require('path');
 const dotenv = require('dotenv');
 
-const mainRouter = require('./routes/main');
-const userRouter = require('./routes/user');
-
 // Environment Variables
 dotenv.config({ path: path.join(__dirname, 'config/app.env') });
+dotenv.config({ path: path.join(__dirname, 'config/db.env') });
+
+const mainRouter = require('./routes/main');
+const userRouter = require('./routes/user');
 
 // Application Setup
 const application = express()

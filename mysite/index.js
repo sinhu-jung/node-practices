@@ -1,15 +1,18 @@
+const express = require('express');
 const http = require('http');
 const path = require('path');
-
-const express = require('express');
+const dotenv = require('dotenv');
 
 const mainRouter = require('./routes/main');
-const port = 8080;
+const userRouter = require('./routes/user');
+
+// Environment Variables
+dotenv.config({ path: path.join(__dirname, 'config/app.env') });
 
 // Application Setup
 const application = express()
     // 1. static serve
-    .use(express.static(path.join(__dirname, 'public')))
+    .use(express.static(path.join(__dirname, process.env.STATIC_RESOURCES_DIRECTORY)))
     //2. request body parser
     .use(express.urlencoded({extended: true})) // application/x-www-form...
     .use(express.json()) // application/json 
@@ -22,7 +25,9 @@ const application = express()
         res.locals.res = res;
         next();
     })
-    .use('/', mainRouter);
+    .use('/', mainRouter)
+    .use('/user', userRouter)
+    .use((req, res)=> res.render('error/404'));
 
     // use('/', function(req, resp, next){
     //     next();
@@ -34,22 +39,22 @@ const application = express()
     
 //Server Setup
 http.createServer(application).on('listening', function(){
-    console.log(`Http Server running on port ${port}`);
+    console.log(`Http Server running on port ${process.env.PORT}`);
 }).on('error', function(error){
     if(error.syscall !== 'listen'){
         throw error;
     }
     switch(error.code){
         case 'EACCESS':
-            console.error(`Port:${port} requires privileges`);
+            console.error(`Port:${process.env.PORT} requires privileges`);
             process.exit(1);
             break;
         case 'EADDRINUSE':
-            console.error(`Port:${port} is already in use`);
+            console.error(`Port:${process.env.PORT} is already in use`);
             process.exit(1);
             break;
         default:
             throw error;
     }
 })
-.listen(port);
+.listen(process.env.PORT);

@@ -1,4 +1,5 @@
-const User = require('../models/User');
+const models = require('../models');
+
 module.exports = {
     joinform: (req, res) => res.render('user/joinform'),
     
@@ -8,7 +9,7 @@ module.exports = {
     },
     
     join: async (req, res) => {
-        const result = await User.create({ firstName: "Jane", lastName: "Doe" });
+        // const result = await User.create({ firstName: "Jane", lastName: "Doe" });
         res.redirect('/user/joinsuccess');
     }
 }

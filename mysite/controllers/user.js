@@ -1,4 +1,5 @@
 const models = require('../models');
+const logger = require('../logging');
 
 module.exports = {
     join: (req, res, next) => {
@@ -86,19 +87,21 @@ module.exports = {
 
     _update: async (req, res, next) => {
         try {
-            req.body.name == '' ? req.body.name = req.session.authUser.name : req.session.authUser.name = req.body.name
-
             const updateObject = Object.assign(req.body);
             if(req.body.password == ''){
                 delete updateObject['password'];
             }
+            
+            req.body.name == '' ? updateObject['name'] = req.session.authUser.name : req.session.authUser.name = updateObject['name'];
 
             // const {[req.body.password == '' ? 'password' : '']: remove, ...updateObject} = req.body;
 
             const user = await models.User.update(
                 updateObject , {where: {no: req.session.authUser.no}})
             res.redirect('/');
+
         } catch(e) {
+            logger.error(e.stack);
             next(e);
         }
     }

@@ -34,13 +34,14 @@
 								<tr>
 									<td>[<%=user.length - i%>]</td>
 									<td><%=vo.name %></td>
-									<td><%=vo.regDate %></td>
+									<td><%=moment(vo.regDate).format('YYYY-MM-DD hh:mm:ss') %></td>
 									<td><a
 										href="/guestbook/delete/<%=vo.no %>">삭제</a></td>
 								</tr>
 								<tr>
 									<td colspan=4><%-user[i].message.replace(/\n/gi, "<br/>") %></td>
 								</tr>
+								<br/>
 							</table> 
 						</li>
 					<% } %>

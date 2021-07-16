@@ -4,7 +4,7 @@ module.exports = function(req, res, next) {
         next();    
         return;
     }
-    if(req.accepts('html')) {
+    if(req.accepts('html')) {   
         res.redirect('/user/login');
         return;
     }

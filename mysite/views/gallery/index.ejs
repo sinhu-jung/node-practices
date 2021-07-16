@@ -40,27 +40,32 @@ $(function(){
 </head>
 <body>
 	<div id="container">
-		<c:import url="/WEB-INF/views/includes/header.jsp" />
+		<%-include("../includes/header") %>
 		<div id="content">
 			<div id="gallery">
 				<div>
 					<h1>갤러리</h1>
-					<a href="" id="upload-image">이미지 올리기</a>
+					
+					<% if(req.session.authUser && req.session.authUser.role === 'ADMIN') {%>
+						<a href="" id="upload-image">이미지 올리기</a>
+					<% } %>	
 				</div>
 				<ul>
 					<% galleries.forEach(function(gallery, index){ %>
 						<li>
-							<a	href="<%=gallery.url%>"
+							<a	href="<%=gallery.url %>"
 								data-lightbox="gallery"
 								class="image"
-								title="<%=gallery.comment%>"
-								style="background-image:url('<%=gallery.url%>')">&nbsp;</a>
-								
-							<a	href="/gallery/delete/<%=gallery.no%>"
+								title="<%=gallery.comment %>"
+								style="background-image:url('<%=gallery.url %>')">&nbsp;</a>
+							
+							<% if(req.session.authUser && req.session.authUser.role === 'ADMIN') {%>
+								<a	href="/gallery/delete/<%=gallery.no %>"
 								class="del-button"
 								title="삭제">삭제</a>
+							<% } %>	
 						</li>
-					<% }) %>
+					<% }) %>	
 				</ul>	
 			</div>
 
@@ -70,7 +75,7 @@ $(function(){
   					  method="post"
   					  enctype="multipart/form-data">
 					<label>코멘트</label>
-					<input type="text" id="input-comment" name="comment" value="">
+					<input type="text" id="input-comments" name="comment" value="">
 					<label>이미지</label>
 					<input type="file" id="input-file" name="file">
 					<input type="submit" tabindex="-1" style="position:absolute; top:-1000px">

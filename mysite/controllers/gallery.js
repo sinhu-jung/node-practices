@@ -1,9 +1,32 @@
+const fs = require('fs');
+const { fstat } = require('fs');
+const path = require('path');
 const models = require('../models');
 
 module.exports = {
     index: async (req, res, next) => {
         try{
             res.render('gallery/index');
+        } catch (e) {
+            next(e);
+        }
+    },
+
+    upload: async (req, res , next) => {
+        try{
+            const file = req.file;
+            const storeDirectory = path.join(path.dirname(require.main.filename), process.env.STATIC_RESOURCES_DIRECTORY, process.env.GALLERY_STORE_LOCATION);
+            const url = path.join(process.env.GALLERY_STORE_LOCATION, file.filename) + path.extname(file.originalname);
+            const storePath = path.join(storeDirectory, file.filename) + path.extname(file.originalname);
+            fs.existsSync(storeDirectory) || fs.mkdirSync(storeDirectory);
+            const content = fs.readFileSync(file.path);
+            fs.writeFileSync(storePath, content, {flag: 'w+'});
+
+            await models.Gallery.create({
+                url: url.replace(/\\/gi, '/'),
+                comment: req.body.comment || ''
+            });
+            res.redirect('/gallery');
         } catch (e) {
             next(e);
         }

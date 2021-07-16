@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>mysite</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="/assets/css/guestbook-spa.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script type="text/javascript" src="/assets/js/jquery/jquery-3.6.0.js"></script>
+<script type="text/javascript" src="/ejs/ejs.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+ var listEJS = new EJS({
+	url: "/ejs/list-template.ejs"
+});
+ 
+ var listItemEJS = new EJS({
+ 	url: "/ejs/listItem-template.ejs"
+ });
+
+ var fetch = function() {
+ 		var no = $("#list-guestbook li:last").data("no");
+ 		if(no == null) {
+ 			no = 0;
+ 		}
+		$.ajax({
+			url: "/guestbook/api/list/spa?sno=" + no,
+			dataType: "json", // 받을 때 포멧 
+			type: "get",	  // 요청 method
+			contentType: "application/json",
+			success: function(response){
+				var html = listEJS.render(response);
+				$("#list-guestbook").append(html);
+			}
+		});
+	}
+
+ var valid = function(titles, message, callback) { 
+	 $("#dialog-message p").text(message);
+	 $("#dialog-message").attr("title", titles).dialog({
+			modal: true,
+			buttons: {
+				"확인": function(){
+					$("#dialog-message").dialog("close");
+				}
+			},
+			close: callback
+		});
+ }	
+ 
+ var addlist = function() {
+	 $("#add-form").submit(function(event){
+			event.preventDefault();
+			
+			vo = {}
+			
+			vo.name = $("#input-name").val();
+			// validation name
+			if(vo.name == "") {
+				valid("오류", "이름이 비었습니다.", function(){
+					$("#input-name").focus();
+				});
+				return;
+			}
+			vo.password = $("#input-password").val();
+			// validation password
+			if(vo.password == "") {
+				valid("오류", "비밀번호가 비었습니다.", function(){
+					$("#input-password").focus();
+				});
+				return;
+			}
+			
+			vo.message = $("#tx-content").val();
+			// validation message
+			if(vo.message == "") {
+				valid("오류", "텍스트가 비었습니다.", function(){
+					$("#tx-content").focus();
+				});
+				return;
+			}
+			
+			// 데이터 등록
+		$.ajax({
+			url: "/guestbook/api/add",
+			dataType: "json",
+			type: "post",
+			contentType: "application/json",   
+			data: JSON.stringify(vo),
+			success: function(response){
+				if(response.result != "success"){
+					console.error(response.message);
+					return;
+				}
+				
+				var html = listItemEJS.render(response.data);
+				$("#list-guestbook").prepend(html);
+				
+				// form reset
+				$("#add-form")[0].reset();
+			}
+		});		
+		
+	});
+ }
+ 
+ var del = function(){
+	$(document).on("click", "#list-guestbook li a", function(event) {
+		event.preventDefault();
+		let no = $(this).data("no");
+		$("#hidden-no").val(no);
+		deleteDialog.dialog("open");
+	});
+	
+	const deleteDialog = $("#dialog-delete-form").dialog({
+		autoOpen: false,
+		width: 300,
+		height: 220,
+		modal: true,
+		buttons: {
+			"삭제": function(){
+				const no = $("#hidden-no").val();
+				const password = $("#password-delete").val();
+				$.ajax({
+					url: "/guestbook/api/delete/" + no,
+					dataType: "json", // 받을 때 포멧 
+					type: "delete",	  // 요청 method
+					data: "password=" + password,
+					success: function(response){
+						if(response.result != "success") {
+							response.error(response.message);
+							return;
+						}
+						
+						if(response.data == -1){
+							//비밀번호가 틀린경우
+							$("#password-delete").val("");
+							$(".validateTips.error").show();
+						}
+						
+						if(response.data != -1){
+							$("#list-guestbook li[data-no="+ response.data + "]").remove();
+							deleteDialog.dialog("close");
+						}
+					}
+				});
+			},
+			"취소": function(){
+				$(this).dialog("close");
+			}
+		},
+		close: function() {
+			// 1. password 비우기
+			$("#password-delete").val("");
+			// 2. no 비우기
+			$("#hidden-no").val("");
+			// 3. error message 숨기기
+			$(".validateTips.error").hide();
+		}
+	});
+ }
+ 
+$(function() {
+	$(window).scroll(function(){
+		var $window = $(this);
+		var windowHeight =  $window.height();
+		var scrollTop = $window.scrollTop();
+		var documentHeight = $(document).height();
+		if(scrollTop + windowHeight + 10 > documentHeight){
+			fetch();
+		}
+	});
+	
+	addlist();
+	del();
+	
+	// 최초 데이터 가져오기
+	fetch();
+});
+ 
+</script>
+</head>
+<body>
+	<div id="container">
+		<c:import url="/WEB-INF/views/includes/header.jsp" />
+		<div id="content">
+			<div id="guestbook">
+				<h1>방명록</h1>
+				<form id="add-form" action="" method="post">
+					<input type="text" id="input-name" placeholder="이름"> <input
+						type="password" id="input-password" placeholder="비밀번호">
+					<textarea id="tx-content" placeholder="내용을 입력해 주세요."></textarea>
+					<input type="submit" value="보내기" />
+				</form>
+				<ul id="list-guestbook"></ul>
+			</div>
+			<div id="dialog-delete-form" title="메세지 삭제" style="display: none">
+				<p class="validateTips normal">작성시 입력했던 비밀번호를 입력하세요.</p>
+				<p class="validateTips error" style="display: none">비밀번호가 틀립니다.</p>
+				<form>
+					<input type="password" id="password-delete" value=""
+						class="text ui-widget-content ui-corner-all"> <input
+						type="hidden" id="hidden-no" value=""> <input
+						type="submit" tabindex="-1"
+						style="position: absolute; top: -1000px">
+				</form>
+			</div>
+			<div id="dialog-message" title="" style="display: none">
+				<p></p>
+			</div>
+		</div>
+		<c:import url="/WEB-INF/views/includes/navigation.jsp" />
+		<c:import url="/WEB-INF/views/includes/footer.jsp" />
+	</div>
+</body>
+</html>

@@ -28,7 +28,7 @@ module.exports = {
                 {no : 8, name: '마이콜', message: '구공ㅌ탄', regDate: new Date()}, 
                 {no : 7, name: '도우너', message: '둘리야~', regDate: new Date()}]
             })
-
+            res.render('guestbook/spa-index');
         } catch (e) {
             next(e);
         }

@@ -48,18 +48,19 @@ $(function(){
 					<a href="" id="upload-image">이미지 올리기</a>
 				</div>
 				<ul>
-					<c:forEach var="vo" items="${list }" varStatus="status" >
+					<% galleries.forEach(function(gallery, index){ %>
 						<li>
-							<a	href="${vo.url}"
+							<a	href="<%=gallery.url%>"
 								data-lightbox="gallery"
 								class="image"
-								style="background-image:url('${vo.url}')">&nbsp;</a>
+								title="<%=gallery.comment%>"
+								style="background-image:url('<%=gallery.url%>')">&nbsp;</a>
 								
-							<a	href="/gallery/delete/${vo.no}"
+							<a	href="/gallery/delete/<%=gallery.no%>"
 								class="del-button"
 								title="삭제">삭제</a>
 						</li>
-					</c:forEach>																																				
+					<% }) %>
 				</ul>	
 			</div>
 

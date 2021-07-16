@@ -1,14 +1,21 @@
+const models = require('../models');
+const { Sequelize } = require('sequelize');
+
 module.exports = {
     create: async (req, res, next) => {
         try {   
-            console.log(req.body);
+            const result = await models.Guestbook.create({ 
+                name: req.body.name,
+                password: req.body.password,
+                message: req.body.message,
+                regDate: models.sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+                });
+            console.log(result);
 
             res.status(200).send({
                 result: 'success',
-                data: Object.assign(req.body, {
-                    no: 10,
+                data: Object.assign(result, {
                     password: '',
-                    regDate: new Date()
                 }),
                 message: null
             })
@@ -20,15 +27,31 @@ module.exports = {
     read: async (req, res, next)  => {
         try {
             const startNo = req.query.sno || 0;
-            console.log(startNo);
+            if(startNo == 0){
+                const results = await models.Guestbook.findAll({
+                    order: [['no','DESC']],
+                    offset: 0, limit: 3
+                });
+                res.status(200).send({
+                    result: 'success',
+                    data: results || [],
+                    message: null
+                });
+            } else {
+                const results = await models.Guestbook.findAll({   
+                    where:{
+                        no: { [Sequelize.Op.lt] : startNo }  
+                    },
+                    order: [['no','DESC']],
+                    offset: 0, limit: 3
+                });
+                res.status(200).send({
+                    result: 'success',
+                    data: results || [],
+                    message: null
+                });
+            }
 
-            res.status(200).send({
-                result: 'success',
-                data: [{ no : 9, name: '둘리', message: '호이~', regDate: new Date()}, 
-                {no : 8, name: '마이콜', message: '구공ㅌ탄', regDate: new Date()}, 
-                {no : 7, name: '도우너', message: '둘리야~', regDate: new Date()}]
-            })
-            res.render('guestbook/spa-index');
         } catch (e) {
             next(e);
         }
@@ -36,7 +59,13 @@ module.exports = {
 
     delete: async (req, res, next) => {
         try{
-            console.log(req.params.no + ":" + req.body.password);
+            const result = await models.Guestbook.destroy({ // 성공하면 1, 실패하면 0
+                where: {
+                    no: req.params.no,
+                    password: req.body.password
+                }
+            });
+
             res.status(200).send({
                 result:'success',
                 data: req.params.no,

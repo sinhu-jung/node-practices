@@ -49,5 +49,13 @@ module.exports = {
         } catch (e) {
             next(e);
         }
+    },
+
+    spa: (req, res, next) => {
+        try {
+            res.render('guestbook/spa-index');
+        } catch(e) {
+            next(e);
+        }
     }
 }

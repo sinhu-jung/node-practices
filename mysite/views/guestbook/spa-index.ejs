@@ -23,7 +23,7 @@
  			no = 0;
  		}
 		$.ajax({
-			url: "/guestbook/api/list/spa?sno=" + no,
+			url: "/api/guestbook?sno=" + no,
 			dataType: "json", // 받을 때 포멧 
 			type: "get",	  // 요청 method
 			contentType: "application/json",
@@ -81,7 +81,7 @@
 			
 			// 데이터 등록
 		$.ajax({
-			url: "/guestbook/api/add",
+			url: "/api/guestbook",
 			dataType: "json",
 			type: "post",
 			contentType: "application/json",   
@@ -121,7 +121,7 @@
 				const no = $("#hidden-no").val();
 				const password = $("#password-delete").val();
 				$.ajax({
-					url: "/guestbook/api/delete/" + no,
+					url: "/api/guestbook/" + no,
 					dataType: "json", // 받을 때 포멧 
 					type: "delete",	  // 요청 method
 					data: "password=" + password,
@@ -181,7 +181,7 @@ $(function() {
 </head>
 <body>
 	<div id="container">
-		<c:import url="/WEB-INF/views/includes/header.jsp" />
+		<%-include("../includes/header") %>
 		<div id="content">
 			<div id="guestbook">
 				<h1>방명록</h1>
@@ -208,8 +208,8 @@ $(function() {
 				<p></p>
 			</div>
 		</div>
-		<c:import url="/WEB-INF/views/includes/navigation.jsp" />
-		<c:import url="/WEB-INF/views/includes/footer.jsp" />
+		<%-include("../includes/navigation") %>
+		<%-include("../includes/footer") %>
 	</div>
 </body>
 </html>

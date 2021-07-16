@@ -11,6 +11,7 @@ const sequelize = new Sequelize(
 const User = require('./User')(sequelize);
 const Guestbook = require('./Guestbook')(sequelize);
 const Gallery = require('./Gallery')(sequelize);
+const Site = require('./Site')(sequelize);
 
 User.sync({
     force: process.env.TABLE_CREATE_ALWAYS === 'true',
@@ -27,4 +28,9 @@ Gallery.sync({
     alter: process.env.TABLE_ALTER_SYNC === 'true'
 });
 
-module.exports = {sequelize, User, Guestbook, Gallery }
+Site.sync({
+    force: process.env.TABLE_CREATE_ALWAYS === 'true',
+    alter: process.env.TABLE_ALTER_SYNC === 'true'
+});
+
+module.exports = {sequelize, User, Guestbook, Gallery, Site }

@@ -1,5 +1,4 @@
 const fs = require('fs');
-const { fstat } = require('fs');
 const path = require('path');
 const models = require('../models');
 

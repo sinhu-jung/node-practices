@@ -4,6 +4,7 @@ const http = require('http');
 const multer = require('multer');
 const path = require('path');
 const dotenv = require('dotenv');
+const authorized = require('./routes/authorized');
 
 // Environment Variables
 dotenv.config({ path: path.join(__dirname, 'config/app.env') });
@@ -13,6 +14,7 @@ const mainRouter = require('./routes/main');
 const userRouter = require('./routes/user');
 const galleryRouter = require('./routes/gallery');
 const guestbookRouter = require('./routes/guestbook');
+const authRouter = require('./routes/admin');
 const userApiRouter = require('./routes/user-api');
 const guestbookApiRouter = require('./routes/guestbook-api');
 const errorRouter = require('./routes/error');
@@ -50,6 +52,7 @@ const application = express()
     .use('/user', userRouter)
     .use('/guestbook', guestbookRouter)
     .use('/gallery', galleryRouter)
+    .use('/admin', authRouter)
     .use('/api/user', userApiRouter)
     .use('/api/guestbook', guestbookApiRouter)
     .use(errorRouter.error404)

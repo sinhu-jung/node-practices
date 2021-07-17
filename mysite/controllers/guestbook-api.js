@@ -1,5 +1,5 @@
 const models = require('../models');
-const { Sequelize } = require('sequelize');
+const { Op } = require("sequelize");
 
 module.exports = {
     create: async (req, res, next) => {
@@ -23,56 +23,42 @@ module.exports = {
             next(e);
         }
     },
-
-    read: async (req, res, next)  => {
+    
+    read: async function(req, res, next) {
         try {
             const startNo = req.query.sno || 0;
-            if(startNo == 0){
-                const results = await models.Guestbook.findAll({
-                    order: [['no','DESC']],
-                    offset: 0, limit: 3
-                });
-                res.status(200).send({
-                    result: 'success',
-                    data: results || [],
-                    message: null
-                });
-            } else {
-                const results = await models.Guestbook.findAll({   
-                    where:{
-                        no: { [Sequelize.Op.lt] : startNo }  
-                    },
-                    order: [['no','DESC']],
-                    offset: 0, limit: 3
-                });
-                res.status(200).send({
-                    result: 'success',
-                    data: results || [],
-                    message: null
-                });
-            }
-
-        } catch (e) {
-            next(e);
-        }
-    },
-
-    delete: async (req, res, next) => {
-        try{
-            const result = await models.Guestbook.destroy({ // 성공하면 1, 실패하면 0
-                where: {
-                    no: req.params.no,
-                    password: req.body.password
-                }
+            const results = await models.Guestbook.findAll({
+                attributes: ['no', 'name', 'message'],
+                where: (startNo > 0) ? {no: {[Op.lt]: startNo}} : {},
+                order: [
+                    ['no', 'desc']
+                ],
+                limit: 3
             });
 
-            res.status(200).send({
-                result:'success',
+            res.send({
+                result: 'success',
+                data: results,
+                message: null
+            });
+        } catch(err){
+          next(err);
+        }       
+    },
+    delete: async function(req, res, next) {
+        try {
+            const result = await models.Guestbook.destroy({
+                where: {
+                    [Op.and]: [{no: req.params.no}, {password: req.body.password}]
+                }
+            });
+            res.send({
+                result: 'success',
                 data: req.params.no,
                 message: null
-            })
-        } catch (e) {
-            next(e);
+            });
+        } catch(err){
+            next(err);
         }
-    }
+    }  
 }

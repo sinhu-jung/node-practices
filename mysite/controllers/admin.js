@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { title } = require('process');
 const models = require('../models');
 
 module.exports = {
@@ -17,21 +18,27 @@ module.exports = {
     update: async (req, res, next) => {
         try {
             const file = req.file;
-            const storeDirectory = path.join(path.dirname(require.main.filename), process.env.STATIC_RESOURCES_DIRECTORY, process.env.GALLERY_STORE_LOCATION);
-            const url = path.join(process.env.GALLERY_STORE_LOCATION, file.filename) + path.extname(file.originalname);
-            const storePath = path.join(storeDirectory, file.filename) + path.extname(file.originalname);
-            fs.existsSync(storeDirectory) || fs.mkdirSync(storeDirectory);
-            const content = fs.readFileSync(file.path);
-            fs.writeFileSync(storePath, content, {flag: 'w+'});
 
-            await User.update({
+            if (file !== undefined){
+                var storeDirectory = path.join(path.dirname(require.main.filename), process.env.STATIC_RESOURCES_DIRECTORY, process.env.GALLERY_STORE_LOCATION);
+                var url = path.join(process.env.GALLERY_STORE_LOCATION, file.filename) + path.extname(file.originalname);
+                var storePath = path.join(storeDirectory, file.filename) + path.extname(file.originalname);
+                fs.existsSync(storeDirectory) || fs.mkdirSync(storeDirectory);
+                var content = fs.readFileSync(file.path);
+                fs.writeFileSync(storePath, content, {flag: 'w+'});
+            }
+
+
+            await models.Site.update({
                 title: req.body.title,
-                welcome: req.body.welcome,
-                profile:  url.replace(/\\/gi, '/'),
-                description: req.body.description || ''
-              });
+                welcome: req.body.welcomeMessage,
+                profile: url && url.replace(/\\/gi, '/') || undefined,
+                description: req.body.description 
+              }, {where: {}});
 
-            res.redirct('/admin')
+            req.session.title = req.body.title;
+            
+            res.redirect('/admin');
         } catch (e) {
             next(e);
         }

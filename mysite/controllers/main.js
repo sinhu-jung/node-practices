@@ -1,7 +1,13 @@
+const models = require('../models');
+
 module.exports = {
-    index: (req, res, next) => {
+    index: async (req, res, next) => {
         try {
-            res.render('main/index')
+            const site = await models.Site.findOne({
+                attributes: ['title', 'welcome', 'profile', 'description']
+            });
+            req.session.title = site.title;
+            res.render('main/index', {site: site});
         } catch (e) {
             next(e);
         }

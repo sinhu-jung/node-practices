@@ -18,13 +18,13 @@ module.exports = {
     update: async (req, res, next) => {
         try {
             const file = req.file;
-
+            let url;
             if (file !== undefined){
-                var storeDirectory = path.join(path.dirname(require.main.filename), process.env.STATIC_RESOURCES_DIRECTORY, process.env.GALLERY_STORE_LOCATION);
-                var url = path.join(process.env.GALLERY_STORE_LOCATION, file.filename) + path.extname(file.originalname);
-                var storePath = path.join(storeDirectory, file.filename) + path.extname(file.originalname);
+                const storeDirectory = path.join(path.dirname(require.main.filename), process.env.STATIC_RESOURCES_DIRECTORY, process.env.GALLERY_STORE_LOCATION);
+                url = path.join(process.env.GALLERY_STORE_LOCATION, file.filename) + path.extname(file.originalname);
+                const storePath = path.join(storeDirectory, file.filename) + path.extname(file.originalname);
                 fs.existsSync(storeDirectory) || fs.mkdirSync(storeDirectory);
-                var content = fs.readFileSync(file.path);
+                const content = fs.readFileSync(file.path);
                 fs.writeFileSync(storePath, content, {flag: 'w+'});
             }
 

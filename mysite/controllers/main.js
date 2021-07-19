@@ -6,7 +6,6 @@ module.exports = {
             const site = await models.Site.findOne({
                 attributes: ['title', 'welcome', 'profile', 'description']
             });
-            req.session.title = site.title;
             res.render('main/index', {site: site});
         } catch (e) {
             next(e);

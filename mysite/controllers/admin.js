@@ -35,7 +35,7 @@ module.exports = {
                 description: req.body.description 
               }, {where: {}});
 
-            req.session.title = req.body.title;
+              req.app.siteTitle  = req.body.title;
             
             res.redirect('/admin');
         } catch (e) {

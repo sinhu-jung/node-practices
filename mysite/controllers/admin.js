@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const { title } = require('process');
 const models = require('../models');
 
 module.exports = {
@@ -42,5 +41,29 @@ module.exports = {
         } catch (e) {
             next(e);
         }
-    }
+    },
+
+    guestbook: (req, res, next) => {
+        try{
+            res.render('admin/guestbook');
+        } catch(e){
+            next(e);
+        }
+    },
+
+    board: (req, res, next) => {
+        try{
+            res.render('admin/board');
+        } catch(e){
+            next(e);
+        }
+    },
+
+    user: (req, res, next) => {
+        try{
+            res.render('admin/user');
+        } catch(e){
+            next(e);
+        }
+    },
 }

@@ -18,6 +18,7 @@ const applicationRouter = {
         .use('/user', require('./user'))
         .use('/guestbook', require('./guestbook'))
         .use('/gallery', require('./gallery'))
+        // .use('/board', require('./board'))
         .use('/admin', authorized('ADMIN'), require('./admin'))
         .use('/api/user/', require('./user-api'))
         .use('/api/guestbook', require('./guestbook-api'))

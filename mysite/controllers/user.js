@@ -56,6 +56,7 @@ module.exports = {
 
             // 로그인 처리 
             req.session.authUser = user;
+            req.session.no = user.no;
             res.redirect('/'); 
         } catch (e) {
             next(e);

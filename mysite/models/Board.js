@@ -7,7 +7,7 @@ module.exports = (sequelize) => {
         regDate: {field: 'reg_date', type: DataTypes.DATE, allowNull: false, defaultValue: Sequelize.NOW},
         hit: {field: 'hit', type: DataTypes.INTEGER, allowNull: true},
         groupNo: {field: 'group_no', type: DataTypes.INTEGER, allowNull: true},
-        orderNO: {field: 'order_no', type: DataTypes.INTEGER, allowNull: true},
+        orderNo: {field: 'order_no', type: DataTypes.INTEGER, allowNull: true},
         depth: {field: 'depth', type: DataTypes.INTEGER, allowNull: true}
     }, {underscored: true, freezeTableName: true, timestamps: true, createdAt: false, updatedAt: false, tableName: 'board'})
 }

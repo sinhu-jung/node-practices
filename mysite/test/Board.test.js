@@ -41,7 +41,21 @@ describe('Model Board', function(){
             hit: 0,
             userNo: user.no
         }); 
-        board.no.should.not.equals(undefined);     
+        board.no.should.not.equals(undefined); 
+    });
+
+    it("Fetch Boards by user(test)", async function() {
+        const result = await models.Board.findAll({
+            where: {
+                userNo: user.no
+            },
+            include: {
+                model: models.User,
+                required: true
+            }
+        });
+
+        result.should.have.lengthOf(3);
     });
 
     after(async function(){

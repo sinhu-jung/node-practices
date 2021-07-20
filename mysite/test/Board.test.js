@@ -22,7 +22,6 @@ describe('Model Board', function(){
         board = await models.Board.create({
             title: 'test',
             contents: 'test',
-            regDate: '2021-07-20',
             hit: 0,
             userNo: user.no
         }); 
@@ -31,7 +30,6 @@ describe('Model Board', function(){
         board = await models.Board.create({
             title: 'test',
             contents: 'test',
-            regDate: '2021-07-20',
             hit: 0,
             userNo: user.no
         }); 
@@ -40,7 +38,6 @@ describe('Model Board', function(){
         board = await models.Board.create({
             title: 'test',
             contents: 'test',
-            regDate: '2021-07-20',
             hit: 0,
             userNo: user.no
         }); 

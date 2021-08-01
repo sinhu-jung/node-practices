@@ -76,7 +76,7 @@ module.exports = {
                 title: req.body.title,
                 contents: req.body.content, 
                 hit: req.body.hit || 0,
-                groupNo: groupNo.groupNo + 1,
+                groupNo: 0,
                 orderNo: 0,
                 depth: 0,
                 userNo: req.session.no
